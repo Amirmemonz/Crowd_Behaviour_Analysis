@@ -1,22 +1,17 @@
 import wx
 import cv2
-import threading
 import pickle
 
-# calculation flags
-calculateDirection = False
-calculatePeopleCount = False
-calculateTotalPeopleCount = False
-calculateTheSpeed = False
-
-# visual flags
-visualizeBBoxes = False
-visualizerCenters = False
+countcrowd = False
+humanTracking = False
+weaponDetection = False
+sensitiveArea = False
+anomalyDetection = False
+emotionDetection = False
 calculateLineCross = False
 
 videoSource = 0
 
-# from tracker import *
 
 def GetAvailableSource():
     index = 0
@@ -31,79 +26,86 @@ def GetAvailableSource():
         index += 1
     return arr
 
- # calculation flags
-def CalculateDirection(e):
+
+# calculation flags
+def countcrowd(e):
     sender = e.GetEventObject()
     isChecked = sender.GetValue()
 
-    global calculateDirection
+    global countcrowd
     if isChecked:
-        calculateDirection = True
-        print(calculateDirection)
+        countcrowd = True
+        print(countcrowd)
     else:
-        calculateDirection = False
-        print(calculateDirection)
+        countcrowd = False
+        print(countcrowd)
 
-def CalculatePeopleCount(e):
+
+def humanTracking(e):
     sender = e.GetEventObject()
     isChecked = sender.GetValue()
 
-    global calculatePeopleCount
+    global humanTracking
     if isChecked:
-        calculatePeopleCount = True
-        print(calculatePeopleCount)
+        humanTracking = True
+        print(humanTracking)
     else:
-        calculatePeopleCount = False
-        print(calculatePeopleCount)
+        humanTracking = False
+        print(humanTracking)
 
-def CalculateTotalPeopleCount(e):
+
+def weaponDetection(e):
     sender = e.GetEventObject()
     isChecked = sender.GetValue()
 
-    global calculateTotalPeopleCount
+    global weaponDetection
     if isChecked:
-        calculateTotalPeopleCount = True
-        print(calculateTotalPeopleCount)
+        weaponDetection = True
+        print(weaponDetection)
     else:
-        calculateTotalPeopleCount = False
-        print(calculateTotalPeopleCount)
+        weaponDetection = False
+        print(weaponDetection)
 
-def CalculateTheSpeed(e):
+
+def sensitiveArea(e):
     sender = e.GetEventObject()
     isChecked = sender.GetValue()
 
-    global calculateTheSpeed
+    global sensitiveArea
     if isChecked:
-        calculateTheSpeed = True
-        print(calculateTheSpeed)
+        sensitiveArea = True
+        print(sensitiveArea)
     else:
-        calculateTheSpeed = False
-        print(calculateTheSpeed)
+        sensitiveArea = False
+        print(sensitiveArea)
+
 
 # visual flags
-def VisualizeBBoxes(e):
+def anomalyDetection(e):
     sender = e.GetEventObject()
     isChecked = sender.GetValue()
 
-    global visualizeBBoxes
+    global anomalyDetection
     if isChecked:
-        visualizeBBoxes = True
-        print(visualizeBBoxes)
+        anomalyDetection = True
+        print(anomalyDetection)
     else:
-        visualizeBBoxes = False
-        print(visualizeBBoxes)
+        anomalyDetection = False
+        print(anomalyDetection)
 
-def VisualizerCenters(e):
+
+def emotionDetection(e):
     sender = e.GetEventObject()
     isChecked = sender.GetValue()
 
-    global visualizerCenters
+    global emotionDetection
     if isChecked:
-        visualizerCenters = True
-        print(visualizerCenters)
+        emotionDetection = True
+        print(emotionDetection)
     else:
-        visualizerCenters = False
-        print(visualizerCenters)
+        emotionDetection = False
+        print(emotionDetection)
+
 
 def CalculateLineCross(e):
     sender = e.GetEventObject()
@@ -123,74 +125,53 @@ class App(wx.Frame):
         super(App, self).__init__(parent, title=title)
         self.widgets()
         self.Show()
-        self.SetSize(370,500)
-
-
-
+        self.SetSize(370, 500)
 
     # Declare a function to add new buttons, icons, etc. to our app
     def widgets(self):
         pnl = wx.Panel(self)
-
-        # Check box Show people count
-        cbVisualizerCenter = wx.CheckBox(pnl, label=' s ', pos=(10, 100))
-        cbVisualizerCenter.SetValue(False)
-        cbVisualizerCenter.Bind(wx.EVT_CHECKBOX, VisualizerCenters)
-
         # Check box show direction
-        cbCalculateDirection = wx.CheckBox(pnl, label='Crowd Detection and Counting', pos=(10, 0))
-        cbCalculateDirection.SetValue(False)
-        cbCalculateDirection.Bind(wx.EVT_CHECKBOX, CalculateDirection)
+        cbcountcrowd = wx.CheckBox(pnl, label='Crowd Detection and Counting', pos=(10, 0))
+        cbcountcrowd.SetValue(False)
+        cbcountcrowd.Bind(wx.EVT_CHECKBOX, countcrowd)
 
         # Check box Show people count
         cbShowCount = wx.CheckBox(pnl, label='Weapon Detection', pos=(10, 20))
         cbShowCount.SetValue(False)
-        cbShowCount.Bind(wx.EVT_CHECKBOX, CalculatePeopleCount)
+        cbShowCount.Bind(wx.EVT_CHECKBOX, humanTracking)
 
         # Check box Show people count
-        cbCalculateTotalPeopleCount = wx.CheckBox(pnl, label='Human Tracking', pos=(10, 40))
-        cbCalculateTotalPeopleCount.SetValue(False)
-        cbCalculateTotalPeopleCount.Bind(wx.EVT_CHECKBOX, CalculateTotalPeopleCount)
+        cbweaponDetection = wx.CheckBox(pnl, label='Human Tracking', pos=(10, 40))
+        cbweaponDetection.SetValue(False)
+        cbweaponDetection.Bind(wx.EVT_CHECKBOX, weaponDetection)
 
         # Check box Show people count
-        cbCalculateTheSpeed = wx.CheckBox(pnl, label='Face Emotion Detection', pos=(10, 60))
-        cbCalculateTheSpeed.SetValue(False)
-        cbCalculateTheSpeed.Bind(wx.EVT_CHECKBOX, CalculateTheSpeed)
+        cbsensitiveArea = wx.CheckBox(pnl, label='Face Emotion Detection', pos=(10, 60))
+        cbsensitiveArea.SetValue(False)
+        cbsensitiveArea.Bind(wx.EVT_CHECKBOX, sensitiveArea)
 
         # Check box Show people count
-        cbVisualizeBBoxes = wx.CheckBox(pnl, label='Anomaly Detection', pos=(10, 80))
-        cbVisualizeBBoxes.SetValue(False)
-        cbVisualizeBBoxes.Bind(wx.EVT_CHECKBOX, VisualizeBBoxes)
+        cbanomalyDetection = wx.CheckBox(pnl, label='Anomaly Detection', pos=(10, 80))
+        cbanomalyDetection.SetValue(False)
+        cbanomalyDetection.Bind(wx.EVT_CHECKBOX, anomalyDetection)
 
         # Check box Show people count
-        cbVisualizerCenters = wx.CheckBox(pnl, label='Sensitive Area Monitoring', pos=(10, 100))
-        cbVisualizerCenters.SetValue(False)
-        cbVisualizerCenters.Bind(wx.EVT_CHECKBOX,  VisualizerCenters)
+        cbemotionDetection = wx.CheckBox(pnl, label='Sensitive Area Monitoring', pos=(10, 100))
+        cbemotionDetection.SetValue(False)
+        cbemotionDetection.Bind(wx.EVT_CHECKBOX, emotionDetection)
 
-        # cbCalculatePeopleOnly = wx.CheckBox(pnl, label='', pos=(10, 120) )
-        # cbCalculatePeopleOnly.SetValue(False)
-        # cbCalculatePeopleOnly.Bind(wx.EVT_CHECKBOX, CalculateLineCross)
-        #
-        # # cbCalculateEverything = wx.CheckBox(pnl, label='Calculate everything', pos=(10, 140))
-        # # cbCalculateEverything.SetValue(False)
-        # # cbCalculateEverything.Bind(wx.EVT_CHECKBOX, CalculateEverything)
-
-        # lbPeopleID = wx.StaticText(pnl, label='People IDs', pos=(10, 40))
-        #
-        # lstPeople = wx.ListBox(pnl, size=(300, -1), pos=(10, 60), choices=GetAvailableSource(), style=wx.LB_SINGLE)
-
-
-        lblList = ['Default camera', 'External camera', 'Source camera']
+        lblList = ['Default Camera', 'External Video']
 
         self.rbox = wx.RadioBox(pnl, label='Video Source', pos=(10, 170), choices=lblList,
                                 majorDimension=1, style=wx.RA_SPECIFY_ROWS)
         self.rbox.Bind(wx.EVT_RADIOBOX, self.SetVal)
 
-        self.basicText = wx.TextCtrl(pnl, -1, 'http://root:root@192.168.70.52/mjpg/1/video.mjpg', size=(300, -1), pos=(10, 230))
+        self.basicText = wx.TextCtrl(pnl, -1, 'http://root:root@192.168.70.52/mjpg/1/video.mjpg', size=(300, -1),
+                                     pos=(10, 230))
 
-        self.labelDetection = wx.StaticText(pnl, label="Enter the detections", pos=(10, 260), style=0)
+        # self.labelDetection = wx.StaticText(pnl, label="Enter the detections", pos=(10, 260), style=0)
 
-        self.basicTextt = wx.TextCtrl(pnl, -1, size=(300, -1), pos=(10, 280))
+        self.basicTextt = wx.TextCtrl(pnl, -1, size=(0, -1), pos=(0, 0))
         closeButton = wx.Button(pnl, label='Start detection', pos=(10, 310))
 
         closeButton.Bind(wx.EVT_BUTTON, self.OnClose)
@@ -200,15 +181,14 @@ class App(wx.Frame):
         classlist = []
         classlist.append(self.basicTextt.GetValue().split(","))
 
-        parameterlist.append(visualizeBBoxes)  # visualizeBBoxes
-        parameterlist.append(visualizerCenters)  # visualizerCenters
-        parameterlist.append(calculateDirection)  # calculateDirection
-        parameterlist.append(calculateTheSpeed)  # calculateSpeed
-        parameterlist.append(calculatePeopleCount)  # calculatePeopleCount
-        parameterlist.append(calculateTotalPeopleCount)  # calculateTotalPeopleCount
+        parameterlist.append(anomalyDetection)  # anomalyDetection
+        parameterlist.append(emotionDetection)  # emotionDetection
+        parameterlist.append(countcrowd)  # countcrowd
+        parameterlist.append(sensitiveArea)  # calculateSpeed
+        parameterlist.append(humanTracking)  # humanTracking
+        parameterlist.append(weaponDetection)  # weaponDetection
         parameterlist.append(classlist)
-        parameterlist.append(calculateLineCross)  # calculateLineCross
-        
+
         stateVal = self.rbox.GetSelection()
         print(classlist)
         global videoSource
@@ -235,5 +215,6 @@ def main():
     myapp = wx.App()
     App(None, title='Crowd Behaviour Analysis')
     myapp.MainLoop()
+
 
 main()
